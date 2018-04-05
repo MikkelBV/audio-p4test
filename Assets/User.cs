@@ -19,5 +19,6 @@ public class User : MonoBehaviour {
 			transform.position += transform.right * movementSpeed / 2 * Time.deltaTime;
 		}
 		transform.Rotate(0, Input.GetAxis("Horizontal") * Time.deltaTime * sensitivity, 0);
+        //transform.Rotate(Input.GetAxis("Vertical") * Time.deltaTime * sensitivity, 0, 0);
 	}
 }

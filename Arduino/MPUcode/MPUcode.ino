@@ -78,7 +78,7 @@ void SendGyroData()
     accl.y = map(accl.y, -3000, 3000, -360, 360); 
     accl.z = map(accl.z, -3000, 3000, -360, 360); 
 
-    if(VectorDistance(accl, lastAccl) > 2) //Only send new accl data if the change is great enough.
+    if(VectorDistance(accl, lastAccl) > 5) //Only send new accl data if the change is great enough.
     {
          // Accelerometer Out
         Serial.print(ROTATION_COMMAND);

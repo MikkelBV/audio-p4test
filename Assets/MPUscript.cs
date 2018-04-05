@@ -23,9 +23,20 @@ public class MPUscript : MonoBehaviour
         if (cmd.StartsWith("R")) //Got a rotation command
         {
             Vector3 accl = ParseAccelerometerData(cmd);
-            //Smoothly rotate to the new rotation position.
-            //target.transform.rotation = Quaternion.Slerp(target.transform.rotation, Quaternion.Euler(accl), Time.deltaTime * 2f);
-            target.transform.Rotate(accl, Space.Self);
+            Vector3 scaledRotation = (accl + new Vector3(360, 360, 360)) / 2;
+
+            Vector3 oneAxeX = new Vector3(-accl.y, target.transform.eulerAngles.y, 0);
+            //Vector3 twoAxe = new Vector3(accl.x, accl.y, 0);
+            Vector3 oneAxeY = new Vector3(target.transform.eulerAngles.x, -accl.x, 0);
+            //Vector3 oneAxe = new Vector3(target.transform.eulerAngles.x, target.transform.eulerAngles.y, accl.z);
+
+            target.transform.rotation = Quaternion.Slerp(target.transform.rotation, Quaternion.Euler(oneAxeX), Time.deltaTime * 2f);
+            target.transform.rotation = Quaternion.Slerp(target.transform.rotation, Quaternion.Euler(oneAxeY), Time.deltaTime * 2f);
+
+            Debug.Log("accl: " + accl + ", rotation: " + target.transform.localEulerAngles);
+
+            
+            //target.transform.Rotate((target.transform.localEulerAngles-accl) * Time.deltaTime, Space.Self);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape) && sp.IsOpen)
@@ -55,7 +66,7 @@ public class MPUscript : MonoBehaviour
             int inSize = inData.Count();
             if (inSize > 0)
             {
-                Debug.Log("ARDUINO->|| " + inData + " ||MSG SIZE:" + inSize.ToString());
+              //  Debug.Log("ARDUINO->|| " + inData + " ||MSG SIZE:" + inSize.ToString());
             }
             //Got the data. Flush the in-buffer to speed reads up.
             inSize = 0;
