@@ -5,7 +5,7 @@ using UnityEngine;
 public class RailSystem : MonoBehaviour {
     public Transform[] nodes;
 	public GameObject target;
-    public float speed;
+    public float movementSpeed, rotationSpeed;
     private int current;
 	
     void Start()
@@ -21,13 +21,13 @@ public class RailSystem : MonoBehaviour {
             Vector3 newPosition = Vector3.MoveTowards(
 				target.transform.position,
 				nodes[current].position,
-				speed * Time.deltaTime
+				movementSpeed * Time.deltaTime
 			);
 
 			Vector3 newRotation = Vector3.RotateTowards(
 				target.transform.forward,
 				nodes[current].position - target.transform.position,
-				2 * Time.deltaTime,
+				rotationSpeed * Time.deltaTime,
 				1.0f
 			);
 

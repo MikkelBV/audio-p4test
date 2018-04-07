@@ -20,11 +20,10 @@ public class Gyrosensor : MonoBehaviour
     float curr_offset_y = 0;
     float curr_offset_z = 0;
 
-    // Increase the speed/influence rotation
     public float factor = 7;
-
     public bool enableRotation;
     public bool enableTranslation;
+    public String port = "COM4";
 
 
     void Start()
@@ -34,7 +33,7 @@ public class Gyrosensor : MonoBehaviour
             //Open the port for the datastream. Adjust "COM4" as needed, leave the rest.
             //Make sure your API compatibility level is set to NET 2.0, and not NET 2.0 Subset 
             // Edit -> Project Settings -> Player -> API Compatibility Level*  down at the right side window.
-            stream = new SerialPort("COM4", 9600, Parity.None, 8, StopBits.One);
+            stream = new SerialPort(port, 9600, Parity.None, 8, StopBits.One);
             stream.ReadTimeout = 1;
             stream.WriteTimeout = 1;
             stream.DtrEnable = false;
@@ -47,6 +46,7 @@ public class Gyrosensor : MonoBehaviour
             this.enabled = false;
         }
     }
+
 
     void Update()
     {
@@ -120,5 +120,4 @@ public class Gyrosensor : MonoBehaviour
             stream.Close();
         }
     }
-
 }
