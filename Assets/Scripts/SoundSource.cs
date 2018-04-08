@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundSource : MonoBehaviour {
-	public AudioSource sound;
+	private AudioSource sound;
 	public bool playOnlyOnce = false;
 	private bool shouldPlay = true;
 	
