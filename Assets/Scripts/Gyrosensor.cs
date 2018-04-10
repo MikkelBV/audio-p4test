@@ -109,7 +109,7 @@ public class Gyrosensor : MonoBehaviour
             curr_angle_z += gz;
 
             if (enableTranslation) transform.position = new Vector3(curr_offset_x, curr_offset_z, curr_offset_y);
-            if (enableRotation) transform.rotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, curr_angle_y * factor);
+            if (enableRotation) transform.localRotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, 0);
 
             stream.BaseStream.Flush();
             stream.DiscardInBuffer();
