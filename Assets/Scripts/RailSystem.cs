@@ -6,6 +6,7 @@ public class RailSystem : MonoBehaviour {
     public Transform[] nodes;
 	public GameObject target;
     public float movementSpeed, rotationSpeed;
+	private float speedScale = 1;
     private int current;
 	
     void Start()
@@ -21,7 +22,7 @@ public class RailSystem : MonoBehaviour {
             Vector3 newPosition = Vector3.MoveTowards(
 				target.transform.position,
 				nodes[current].position,
-				movementSpeed * Time.deltaTime
+				movementSpeed * Time.deltaTime * speedScale
 			);
 
 			Vector3 newRotation = Vector3.RotateTowards(
@@ -44,6 +45,16 @@ public class RailSystem : MonoBehaviour {
 				this.enabled = false;
 				return;
 			}
+
+			try
+			{
+				speedScale = nodes[current].GetComponent<RailNode>().scaleSpeedFactor;
+			} 
+			catch
+			{
+				speedScale = 1;
+			}
+			
         }
 	}
 
