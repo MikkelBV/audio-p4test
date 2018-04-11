@@ -10,7 +10,9 @@ public class Gyrosensor : MonoBehaviour
     SerialPort stream;
 
     float acc_normalizer_factor = 0.00025f;
-    float gyro_normalizer_factor = 1.0f / 32768.0f;   // 32768 is max value captured during test on imu
+    //float gyro_normalizer_factor = 1.0f / 32768.0f;   // 32768 is max value captured during test on imu
+    float gyro_normalizer_factor = 1.0f / 32768.0f;
+    public float noise_threshold = 0.010f;
 
     float curr_angle_x = 0;
     float curr_angle_y = 0;
@@ -99,9 +101,9 @@ public class Gyrosensor : MonoBehaviour
 
 
             // Prevent minor noise -  if the absolute value of the normalized gyro-data is less than 0.025f then don't add anything
-            if (Mathf.Abs(gx) < 0.025f) gx = 0f;
-            if (Mathf.Abs(gy) < 0.025f) gy = 0f;
-            if (Mathf.Abs(gz) < 0.025f) gz = 0f;
+            if (Mathf.Abs(gx) < 0.010f) gx = 0f;
+            if (Mathf.Abs(gy) < 0.010f) gy = 0f;
+            if (Mathf.Abs(gz) < 0.010f) gz = 0f;
 
             //Add normalized angles to new angle
             curr_angle_x += gx;

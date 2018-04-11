@@ -28,19 +28,20 @@ void loop(){
   GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
  
+
  
   Serial.print(AcX); Serial.print(";"); Serial.print(AcY); Serial.print(";"); Serial.print(AcZ); Serial.print(";");
   Serial.print(GyX); Serial.print(";"); Serial.print(GyY); Serial.print(";"); Serial.print(GyZ); Serial.println("");
   Serial.flush();
  
  //if we want the accelerometer or temperature graphed as well, just do the same as below for those variables, or change the variables.
- /*
- Serial.print(GyX, DEC);
- Serial.print(" ");
- Serial.print(GyY, DEC);
- Serial.print(" ");
- Serial.println(GyZ, DEC);
- */
+ 
+ //Serial.print(GyX, DEC);
+ //Serial.print(" ");
+ //Serial.print(GyY, DEC);
+ //Serial.print(" ");
+ //Serial.println(GyZ, DEC);
+ 
   delay(16);
 }
  
