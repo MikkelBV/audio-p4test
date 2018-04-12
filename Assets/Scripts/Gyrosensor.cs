@@ -32,9 +32,15 @@ public class Gyrosensor : MonoBehaviour
     {
         try 
         {
-            //Open the port for the datastream. Adjust "COM4" as needed, leave the rest.
-            //Make sure your API compatibility level is set to NET 2.0, and not NET 2.0 Subset 
-            // Edit -> Project Settings -> Player -> API Compatibility Level*  down at the right side window.
+            /*
+             * Open the port for the datastream. Adjust "COM4" as needed in the inspector if needed.
+             * Make sure your API compatibility level is set to NET 2.0, and not NET 2.0 Subset 
+             * Edit -> Project Settings -> Player -> API Compatibility Level*  down at the right side window.
+             * 
+             * new SerialPort(port, baudrate, Parity, databits, stopbits)
+             * port = COM port; baudrate = amount of bits transferred per second; Parity = Error checking (default none); Databits = expected int32 bits to receive; Stopbits = amount of stopbits
+           
+        */
             stream = new SerialPort(port, 9600, Parity.None, 8, StopBits.One);
             stream.ReadTimeout = 1;
             stream.WriteTimeout = 1;
