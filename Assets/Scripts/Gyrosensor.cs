@@ -25,7 +25,7 @@ public class Gyrosensor : MonoBehaviour
     public float factor = 7;
     public bool enableRotation;
     public bool enableTranslation;
-    public String port = "COM4";
+    public String port;
 
 
     void Start()
@@ -117,7 +117,18 @@ public class Gyrosensor : MonoBehaviour
             curr_angle_z += gz;
 
             if (enableTranslation) transform.position = new Vector3(curr_offset_x, curr_offset_z, curr_offset_y);
-            if (enableRotation) transform.localRotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, 0);
+            if (enableRotation)
+            {
+                if (port == "COM4")
+                    transform.localRotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, 0);
+                if (port == "COM3")
+                    transform.localRotation = Quaternion.Euler(0, -curr_angle_z * factor, 0);
+
+            }
+
+            Vector3 resetRotation = new Vector3(0, 0, 0);
+            if (Input.GetKeyDown(KeyCode.R))
+                transform.rotation = Quaternion.Euler(resetRotation);
 
             stream.BaseStream.Flush();
             stream.DiscardInBuffer();
