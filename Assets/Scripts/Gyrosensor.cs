@@ -65,7 +65,7 @@ public class Gyrosensor : MonoBehaviour
             try
             {
                 dataString = stream.ReadLine();
-                Debug.Log("DATA_ : " + dataString);
+                //Debug.Log("DATA_ : " + dataString);
             }
             catch (System.IO.IOException ioe)
             {
@@ -107,9 +107,9 @@ public class Gyrosensor : MonoBehaviour
 
 
             // Prevent minor noise -  if the absolute value of the normalized gyro-data is less than 0.025f then don't add anything
-            if (Mathf.Abs(gx) < 0.010f) gx = 0f;
-            if (Mathf.Abs(gy) < 0.010f) gy = 0f;
-            if (Mathf.Abs(gz) < 0.010f) gz = 0f;
+            if (Mathf.Abs(gx) < noise_threshold) gx = 0f;
+            if (Mathf.Abs(gy) < noise_threshold) gy = 0f;
+            if (Mathf.Abs(gz) < noise_threshold) gz = 0f;
 
             //Add normalized angles to new angle
             curr_angle_x += gx;
@@ -123,7 +123,6 @@ public class Gyrosensor : MonoBehaviour
                     transform.localRotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, 0);
                 if (port == "COM3")
                     transform.localRotation = Quaternion.Euler(0, -curr_angle_z * factor, 0);
-
             }
 
             Vector3 resetRotation = new Vector3(0, 0, 0);
