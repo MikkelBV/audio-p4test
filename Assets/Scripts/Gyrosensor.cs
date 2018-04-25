@@ -12,7 +12,7 @@ public class Gyrosensor : MonoBehaviour
     float acc_normalizer_factor = 0.00025f;
     //float gyro_normalizer_factor = 1.0f / 32768.0f;   // 32768 is max value captured during test on imu
     float gyro_normalizer_factor = 1.0f / 32768.0f;
-    public float noise_threshold = 0.010f;
+    public float noise_threshold = 0.01f;
 
     float curr_angle_x = 0;
     float curr_angle_y = 0;
@@ -22,7 +22,7 @@ public class Gyrosensor : MonoBehaviour
     float curr_offset_y = 0;
     float curr_offset_z = 0;
 
-    public float factor = 7;
+    public float factor = 13;
     public bool enableRotation;
     public bool enableTranslation;
     public String port;
@@ -103,7 +103,7 @@ public class Gyrosensor : MonoBehaviour
 
             curr_offset_x += ax;
             curr_offset_y += ay;
-            curr_offset_z += 0; // The IMU module have value of z axis of 16600 caused by gravity
+            curr_offset_z += az; // The IMU module have value of z axis of 16600 caused by gravity
 
 
             // Prevent minor noise -  if the absolute value of the normalized gyro-data is less than 0.025f then don't add anything
@@ -116,7 +116,7 @@ public class Gyrosensor : MonoBehaviour
             curr_angle_y += gy;
             curr_angle_z += gz;
 
-            if (enableTranslation) transform.position = new Vector3(curr_offset_x, curr_offset_z, curr_offset_y);
+            if (enableTranslation) transform.position = new Vector3(curr_offset_x * 0.5f, curr_offset_z* 0.5f, curr_offset_y*0.5f);
             if (enableRotation)
             {
                 if (port == "COM4")
