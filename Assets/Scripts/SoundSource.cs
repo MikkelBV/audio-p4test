@@ -17,6 +17,7 @@ public class SoundSource : MonoBehaviour {
 	{
 		if (shouldPlay)
 		{
+			Debug.Log("Soundsource triggered");
 			sound.Play();
 			if (playOnlyOnce) shouldPlay = false;
 		}
