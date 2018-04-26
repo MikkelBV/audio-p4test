@@ -24,7 +24,7 @@ public class ControllerScript : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            transform.localPosition = new Vector3(0.38f, 0.15f, 2.06f);
+            transform.localPosition = new Vector3(-0.11f, 0.063f, 1.42f);
             hasMoved = false;
         }
 
