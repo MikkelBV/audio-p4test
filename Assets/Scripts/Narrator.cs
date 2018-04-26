@@ -15,7 +15,11 @@ public class Narrator : MonoBehaviour {
 		if (other.gameObject.tag == "Narrator") 
 		{
 			Debug.Log("Narrator soundclip triggered");
-			audioSource.clip = other.gameObject.GetComponent<AudioClipContainer>().GetAudioClip();
+			
+			AudioClip narrationClip = other.gameObject.GetComponent<AudioClipContainer>().GetAudioClip();
+			if (narrationClip == null) return;
+
+			audioSource.clip = narrationClip;
 			audioSource.Play();
 		}
 	}
