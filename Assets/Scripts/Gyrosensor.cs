@@ -12,7 +12,7 @@ public class Gyrosensor : MonoBehaviour
     float acc_normalizer_factor = 0.00025f;
     //float gyro_normalizer_factor = 1.0f / 32768.0f;   // 32768 is max value captured during test on imu
     float gyro_normalizer_factor = 1.0f / 32768.0f;
-    public float noise_threshold = 0.010f;
+    public float noise_threshold = 0.01f;
 
     float curr_angle_x = 0;
     float curr_angle_y = 0;
@@ -22,10 +22,10 @@ public class Gyrosensor : MonoBehaviour
     float curr_offset_y = 0;
     float curr_offset_z = 0;
 
-    public float factor = 7;
+    public float factor = 13;
     public bool enableRotation;
     public bool enableTranslation;
-    public String port = "COM4";
+    public String port;
 
 
     void Start()
@@ -65,7 +65,7 @@ public class Gyrosensor : MonoBehaviour
             try
             {
                 dataString = stream.ReadLine();
-                Debug.Log("DATA_ : " + dataString);
+                //Debug.Log("DATA_ : " + dataString);
             }
             catch (System.IO.IOException ioe)
             {
@@ -103,21 +103,31 @@ public class Gyrosensor : MonoBehaviour
 
             curr_offset_x += ax;
             curr_offset_y += ay;
-            curr_offset_z += 0; // The IMU module have value of z axis of 16600 caused by gravity
+            curr_offset_z += az; // The IMU module have value of z axis of 16600 caused by gravity
 
 
             // Prevent minor noise -  if the absolute value of the normalized gyro-data is less than 0.025f then don't add anything
-            if (Mathf.Abs(gx) < 0.010f) gx = 0f;
-            if (Mathf.Abs(gy) < 0.010f) gy = 0f;
-            if (Mathf.Abs(gz) < 0.010f) gz = 0f;
+            if (Mathf.Abs(gx) < noise_threshold) gx = 0f;
+            if (Mathf.Abs(gy) < noise_threshold) gy = 0f;
+            if (Mathf.Abs(gz) < noise_threshold) gz = 0f;
 
             //Add normalized angles to new angle
             curr_angle_x += gx;
             curr_angle_y += gy;
             curr_angle_z += gz;
 
-            if (enableTranslation) transform.position = new Vector3(curr_offset_x, curr_offset_z, curr_offset_y);
-            if (enableRotation) transform.localRotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, 0);
+            if (enableTranslation) transform.position = new Vector3(curr_offset_x * 0.5f, curr_offset_z* 0.5f, curr_offset_y*0.5f);
+            if (enableRotation)
+            {
+                if (port == "COM3")
+                    transform.localRotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, 0);
+                if (port == "COM4")
+                    transform.localRotation = Quaternion.Euler(0, -curr_angle_z * factor, 0);
+            }
+
+            Vector3 resetRotation = new Vector3(0, 0, 0);
+            if (Input.GetKeyDown(KeyCode.R))
+                transform.rotation = Quaternion.Euler(resetRotation);
 
             stream.BaseStream.Flush();
             stream.DiscardInBuffer();
