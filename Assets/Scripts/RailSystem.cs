@@ -8,11 +8,14 @@ public class RailSystem : MonoBehaviour {
     public float movementSpeed, rotationSpeed;
 	private float speedScale = 1;
     private int current;
+	public bool playOnAwake = true;
 	
     void Start()
 	{
 		current = 0;
 		nodes = GetNodes();
+
+		if (!playOnAwake) this.enabled = false;
     }
 
   	void Update ()
@@ -53,8 +56,7 @@ public class RailSystem : MonoBehaviour {
 			catch
 			{
 				speedScale = 1;
-			}
-			
+			}			
         }
 	}
 
@@ -72,4 +74,13 @@ public class RailSystem : MonoBehaviour {
 
 		return children;
 	}	
+
+	void OnTriggerEnter(Collider other)
+	{
+		if (!playOnAwake)
+		{
+			Debug.Log("RailSystem activated");
+			this.enabled = true;
+		}
+	}
 }
