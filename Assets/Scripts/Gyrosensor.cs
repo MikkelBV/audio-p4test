@@ -1,7 +1,9 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using System.Threading;
 using System;
 using System.IO.Ports;
+using System.IO;
 using System.Linq;
 
 
@@ -26,7 +28,7 @@ public class Gyrosensor : MonoBehaviour
     public bool enableRotation;
     public bool enableTranslation;
     public String port;
-
+    private Queue<Vector3> rotationQueue = new Queue<Vector3>();
 
     void Start()
     {
@@ -46,6 +48,9 @@ public class Gyrosensor : MonoBehaviour
             stream.WriteTimeout = 1;
             stream.DtrEnable = false;
             stream.Open();
+
+            Thread datalogger = new Thread(LogDataAsync);
+            datalogger.Start();
         }
         catch 
         {
@@ -58,20 +63,23 @@ public class Gyrosensor : MonoBehaviour
 
     void Update()
     {
-        string dataString = "null received";
+        string dataString = "0;0;0;0;0;0";
 
         if (stream.IsOpen)
         {
             try
             {
                 dataString = stream.ReadLine();
-                //Debug.Log("DATA_ : " + dataString);
+                Debug.Log("DATA_ : " + dataString);
             }
             catch (System.IO.IOException ioe)
             {
                 Debug.Log("IOException: " + ioe.Message);
             }
-
+            catch (TimeoutException e)
+            {
+                
+            }
         }
         else
         {
@@ -116,13 +124,18 @@ public class Gyrosensor : MonoBehaviour
             curr_angle_y += gy;
             curr_angle_z += gz;
 
-            if (enableTranslation) transform.position = new Vector3(curr_offset_x * 0.5f, curr_offset_z* 0.5f, curr_offset_y*0.5f);
+            // if (enableTranslation) transform.position = new Vector3(curr_offset_x * 0.5f, curr_offset_z* 0.5f, curr_offset_y*0.5f);
             if (enableRotation)
             {
+                Vector3 newRotation;
+
                 if (port == "COM3")
-                    transform.localRotation = Quaternion.Euler(curr_angle_x * factor, -curr_angle_z * factor, 0);
-                if (port == "COM4")
-                    transform.localRotation = Quaternion.Euler(0, -curr_angle_z * factor, 0);
+                    newRotation = new Vector3(curr_angle_x * factor, -curr_angle_z * factor, 0);
+                else
+                    newRotation = new Vector3(0, -curr_angle_z * factor, 0);
+
+                transform.localRotation = Quaternion.Euler(newRotation);
+                rotationQueue.Enqueue(newRotation);
             }
 
             Vector3 resetRotation = new Vector3(0, 0, 0);
@@ -136,6 +149,25 @@ public class Gyrosensor : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && stream.IsOpen)
         {
             stream.Close();
+        }
+    }
+
+    void LogDataAsync() {
+        string path = string.Format("log-{0}.csv", port);
+        using (StreamWriter dataFile = new StreamWriter(path))
+        {
+            // write header
+            dataFile.WriteLine("x, y, z");
+            dataFile.Flush();
+
+            while (true) {
+                if (rotationQueue.Count > 0) {
+                    Vector3 rotation = rotationQueue.Dequeue();
+                    string rotationToString = string.Format("{0}, {1}, {2}", rotation.x, rotation.y, rotation.z);
+                    dataFile.WriteLine(rotationToString);
+                    dataFile.Flush();
+                }
+            }
         }
     }
 }
