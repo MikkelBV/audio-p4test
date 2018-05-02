@@ -3,30 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ControllerScript : MonoBehaviour {
-   
-    public float distance;
-    private bool hasMoved = false;
-
-	void Start () { 
-		
-	}
+    public float Distance;
+    public Vector3 Normal;
 	
-	
-	void Update () {
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if (!hasMoved)
-            {
-                transform.Translate(new Vector3(0f, 0f, distance) * Time.deltaTime, Space.Self);
-                hasMoved = true;
-            }
+	void Update ()  {
+        if (Input.GetKeyDown(KeyCode.UpArrow)) {
+            transform.localPosition = transform.forward * Distance;
+        } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+            transform.localPosition = Normal;
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            transform.localPosition = new Vector3(-0.11f, 0.063f, 1.42f);
-            hasMoved = false;
-        }
-
 	}
 }

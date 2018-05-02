@@ -7,8 +7,7 @@ using System.IO;
 using System.Linq;
 
 
-public class Gyrosensor : MonoBehaviour
-{
+public class Gyrosensor : MonoBehaviour {
     SerialPort stream;
 
     float acc_normalizer_factor = 0.00025f;
@@ -27,13 +26,12 @@ public class Gyrosensor : MonoBehaviour
     public float factor = 13;
     public bool enableRotation;
     public bool enableTranslation;
+    public bool EnableMouseControlsForController = false;
     public String port;
     private Queue<Vector3> rotationQueue = new Queue<Vector3>();
 
-    void Start()
-    {
-        try 
-        {
+    void Start() {
+        try {
             /*
              * Open the port for the datastream. Adjust "COM4" as needed in the inspector if needed.
              * Make sure your API compatibility level is set to NET 2.0, and not NET 2.0 Subset 
@@ -51,43 +49,32 @@ public class Gyrosensor : MonoBehaviour
 
             Thread datalogger = new Thread(LogDataAsync);
             datalogger.Start();
-        }
-        catch 
-        {
+        } catch {
             // disable the script if Arduino not found
-            Debug.Log("Could not connect to Arduino");
+            Debug.Log("Could not connect to Arduino on port " + port);
             this.enabled = false;
+            if (EnableMouseControlsForController) EnableMouseControls();
         }
     }
 
 
-    void Update()
-    {
+    void Update() {
         string dataString = "0;0;0;0;0;0";
 
-        if (stream.IsOpen)
-        {
-            try
-            {
+        if (stream.IsOpen) {
+            try {
                 dataString = stream.ReadLine();
                 Debug.Log("DATA_ : " + dataString);
-            }
-            catch (System.IO.IOException ioe)
-            {
+            } catch (System.IO.IOException ioe) {
                 Debug.Log("IOException: " + ioe.Message);
+            } catch {
+                Debug.Log("Oh dear lord hecc' no");
             }
-            catch (TimeoutException e)
-            {
-                
-            }
-        }
-        else
-        {
+        } else {
             dataString = "NOT OPEN";
         }
 
-        if (!dataString.Equals("NOT OPEN"))
-        {
+        if (!dataString.Equals("NOT OPEN")) {
             // Received datastring looks like "accx;accy;accz;gyrox;gyroy;gyroz"
             //Below splits the string into a string array everytime the character ; appears
             char splitChar = ';';
@@ -125,8 +112,7 @@ public class Gyrosensor : MonoBehaviour
             curr_angle_z += gz;
 
             // if (enableTranslation) transform.position = new Vector3(curr_offset_x * 0.5f, curr_offset_z* 0.5f, curr_offset_y*0.5f);
-            if (enableRotation)
-            {
+            if (enableRotation) {
                 Vector3 newRotation;
 
                 if (port == "COM3")
@@ -146,16 +132,18 @@ public class Gyrosensor : MonoBehaviour
             stream.DiscardInBuffer();
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape) && stream.IsOpen)
-        {
+        if (Input.GetKeyDown(KeyCode.Escape) && stream.IsOpen) {
             stream.Close();
         }
     }
 
+    void EnableMouseControls() {
+        GetComponent<MouseController>().enabled = true;
+    }
+
     void LogDataAsync() {
         string path = string.Format("log-{0}.csv", port);
-        using (StreamWriter dataFile = new StreamWriter(path))
-        {
+        using (StreamWriter dataFile = new StreamWriter(path)) {
             // write header
             dataFile.WriteLine("x, y, z");
             dataFile.Flush();

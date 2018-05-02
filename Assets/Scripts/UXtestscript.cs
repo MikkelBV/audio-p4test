@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UXtestscript : MonoBehaviour {
-	public bool PlayFirstOnAwake = false;
 	public List<TestClip> Sounds;
 	private Queue<TestClip> soundQueue;
 
 	void Start () {
 		soundQueue = new Queue<TestClip>(Sounds);
-		if (PlayFirstOnAwake) PlayNext();
 	}
 	
 	void Update () {
