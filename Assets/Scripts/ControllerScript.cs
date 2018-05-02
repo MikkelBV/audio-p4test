@@ -7,9 +7,9 @@ public class ControllerScript : MonoBehaviour {
     public Vector3 Normal;
 	
 	void Update ()  {
-        if (Input.GetKeyDown(KeyCode.UpArrow)) {
+        if (Input.GetMouseButtonDown(0)) {
             transform.localPosition = transform.forward * Distance;
-        } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+        } else if (Input.GetMouseButtonDown(1)) {
             transform.localPosition = Normal;
         }
 	}
