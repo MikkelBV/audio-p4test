@@ -10,18 +10,15 @@ public class RailSystem : MonoBehaviour {
     private int current;
 	public bool playOnAwake = true;
 	
-    void Start()
-	{
+    void Start() {
 		current = 0;
 		nodes = GetNodes();
 
 		if (!playOnAwake) this.enabled = false;
     }
 
-  	void Update ()
-	{
-        if (target.transform.position != nodes[current].position) 
-		{
+  	void Update () {
+        if (target.transform.position != nodes[current].position) {
             Vector3 newPosition = Vector3.MoveTowards(
 				target.transform.position,
 				nodes[current].position,
@@ -38,36 +35,29 @@ public class RailSystem : MonoBehaviour {
 			target.transform.rotation = Quaternion.LookRotation(newRotation);
             target.transform.position = newPosition;
         }
-        else
-		{
+        else {
             current++;
 
-			if (current == nodes.Length) 
-			{
+			if (current == nodes.Length) {
 				Debug.Log("Rail finished!");
 				this.enabled = false;
 				return;
 			}
 
-			try
-			{
+			try {
 				speedScale = nodes[current].GetComponent<RailNode>().scaleSpeedFactor;
-			} 
-			catch
-			{
+			} catch {
 				speedScale = 1;
 			}			
         }
 	}
 
-	private Transform[] GetNodes()
-	{
+	private Transform[] GetNodes() {
 		// add one entry as we start at the players position
 		Transform[] children = new Transform[transform.childCount + 1];
 		children[0] = target.transform;
 
-		for (int i = 0; i < transform.childCount; i++) 
-		{
+		for (int i = 0; i < transform.childCount; i++) {
 			// insert at i+1 as we are starting at at index 0 for children, but index 1 in the array
 			children[i + 1] = transform.GetChild(i);
 		}
@@ -75,10 +65,8 @@ public class RailSystem : MonoBehaviour {
 		return children;
 	}	
 
-	void OnTriggerEnter(Collider other)
-	{
-		if (!playOnAwake)
-		{
+	void OnTriggerEnter(Collider other) {
+		if (!playOnAwake) {
 			Debug.Log("RailSystem activated");
 			this.enabled = true;
 		}

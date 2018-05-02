@@ -5,6 +5,7 @@ using UnityEngine;
 public class User : MonoBehaviour {
 	public int movementSpeed = 3;
 	public static float sensitivity = 2f;
+	
 	void Update () {
 		if (Input.GetKey(KeyCode.W)) {
 			transform.position += transform.forward * movementSpeed * Time.deltaTime;

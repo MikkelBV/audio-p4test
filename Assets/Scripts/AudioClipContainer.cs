@@ -7,8 +7,7 @@ public class AudioClipContainer : MonoBehaviour {
 	public bool playOnlyOnce = true;
 	private bool shouldPlay = true;
 
-	public AudioClip GetAudioClip() 
-	{
+	public AudioClip GetAudioClip() {
 		if (!shouldPlay) return null;
 		if (playOnlyOnce) shouldPlay = false;
 		

@@ -5,15 +5,12 @@ using UnityEngine;
 public class Narrator : MonoBehaviour {
 	private AudioSource audioSource;
 
-	void Start()
-	{
+	void Start() {
 		audioSource = GetComponent<AudioSource>();
 	}
 
-	void OnTriggerEnter(Collider other)
-	{
-		if (other.gameObject.tag == "Narrator") 
-		{
+	void OnTriggerEnter(Collider other) {
+		if (other.gameObject.tag == "Narrator") {
 			Debug.Log("Narrator soundclip triggered");
 			
 			AudioClip narrationClip = other.gameObject.GetComponent<AudioClipContainer>().GetAudioClip();

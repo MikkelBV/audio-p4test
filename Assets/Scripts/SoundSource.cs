@@ -7,16 +7,13 @@ public class SoundSource : MonoBehaviour {
 	public bool playOnlyOnce = false;
 	private bool shouldPlay = true;
 	
-	void Start ()
-	{
+	void Start () {
 		sound = GetComponent<AudioSource>();
 		sound.playOnAwake = false;
 	}
 	
-	void OnTriggerEnter(Collider other)
-	{
-		if (shouldPlay)
-		{
+	void OnTriggerEnter(Collider other) {
+		if (shouldPlay) {
 			Debug.Log("Soundsource triggered");
 			sound.Play();
 			if (playOnlyOnce) shouldPlay = false;
