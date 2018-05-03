@@ -40,8 +40,7 @@ public class Gyrosensor : MonoBehaviour {
              * 
              * new SerialPort(port, baudrate, Parity, databits, stopbits)
              * port = COM port; baudrate = amount of bits transferred per second; Parity = Error checking (default none); Databits = expected int32 bits to receive; Stopbits = amount of stopbits
-           
-        */
+             */
             stream = new SerialPort(port, 9600, Parity.None, 8, StopBits.One);
             stream.ReadTimeout = 1;
             stream.WriteTimeout = 1;
@@ -60,26 +59,25 @@ public class Gyrosensor : MonoBehaviour {
 
 
     void Update() {
-        string dataString = "0;0;0;0;0;0";
+        string dataString = "0;0;0;0;0;0;0";
 
         if (stream.IsOpen) {
             try {
                 dataString = stream.ReadLine();
-                //Debug.Log("DATA_ : " + dataString);
             } catch (System.IO.IOException ioe) {
                 Debug.Log("IOException: " + ioe.Message);
-            } catch {
-                Debug.Log("Oh dear lord hecc' no");
-            }
+            } catch {}
         } else {
-            dataString = "NOT OPEN";
+            dataString = null;
         }
 
-        if (!dataString.Equals("NOT OPEN")) {
+        if (dataString != null) {
             // Received datastring looks like "accx;accy;accz;gyrox;gyroy;gyroz"
-            //Below splits the string into a string array everytime the character ; appears
+            // Below splits the string into a string array everytime the character ; appears
             char splitChar = ';';
             string[] dataRaw = dataString.Split(splitChar);
+
+            if (dataRaw.Length != 7) return;
 
             // Normalized ACCELEROMETER data (can be enabled with "Enable translation")
             float ax = Int32.Parse(dataRaw[0]) * acc_normalizer_factor;
@@ -92,7 +90,7 @@ public class Gyrosensor : MonoBehaviour {
             float gz = Int32.Parse(dataRaw[5]) * gyro_normalizer_factor;
 
             //Button state
-            int bs = Int32.Parse(dataRaw[6]);
+            bool buttonPressed = dataRaw[6] == "1";
 
             // Prevent drift? Not sure. Only applicable for accelerometer
             if (Mathf.Abs(ax) - 1 < 0) ax = 0;
@@ -127,11 +125,7 @@ public class Gyrosensor : MonoBehaviour {
                 transform.localRotation = Quaternion.Euler(newRotation);
                 rotationQueue.Enqueue(newRotation);
 
-                if (bs == 1)
-                    Debug.Log("BS: 1");
-                if (bs == 0)
-                    Debug.Log("BS: 0");
-
+                if (buttonPressed) Debug.Log("Button pressed");
             }
 
             Vector3 resetRotation = new Vector3(0, 0, 0);
@@ -158,7 +152,7 @@ public class Gyrosensor : MonoBehaviour {
             dataFile.WriteLine("x, y, z");
             dataFile.Flush();
 
-            while (true) {
+            while (Application.isPlaying) {
                 if (rotationQueue.Count > 0) {
                     Vector3 rotation = rotationQueue.Dequeue();
                     string rotationToString = string.Format("{0}, {1}, {2}", rotation.x, rotation.y, rotation.z);
@@ -168,9 +162,4 @@ public class Gyrosensor : MonoBehaviour {
             }
         }
     }
-
-    private void OnApplicationQuit()
-    {
-        datalogger.Abort();
-    }
-}
+}   
