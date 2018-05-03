@@ -1,9 +1,14 @@
 #include<Wire.h>
 const int MPU = 0x68;  // I2C address of the MPU-9250
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ; // Variables for 16bit values
+
 int buttonState = 0;
 int buttonPin = 7;
 int buttonStateUni;
+int state = LOW;
+int previous = LOW;
+long time = 0;
+long debounce = 200;
  
 void setup(){
   Wire.begin(); // Initiates the Wire library and joins the I2C in the system (allows communication on the detected USB COM port). Is called as a master by default.
@@ -33,10 +38,21 @@ void loop(){
  
   buttonState = digitalRead(buttonPin);
 
-  if (buttonState == HIGH){
+
+  if (buttonState == HIGH && previous == LOW && millis() - time > debounce){
+    if(state == HIGH){
+      state = LOW;
+    }
+    else{
+      state = HIGH;
+    }
+    time = millis();
+  }
+
+  if (state == HIGH){
     buttonStateUni = 1;
   }
-  if (buttonState == LOW) {
+  if (state == LOW){
     buttonStateUni = 0;
   }
  
