@@ -61,7 +61,7 @@ public class Gyrosensor : MonoBehaviour {
 
 
     void Update() {
-        string dataString = "0;0;0;0;0;0;0";
+        string dataString = "0;0;0;0;0;0;-1";
 
         if (stream.IsOpen) {
             try {
@@ -115,22 +115,19 @@ public class Gyrosensor : MonoBehaviour {
             if (enableRotation) {
                 Vector3 newRotation;
 
-                if (port == "COM3") {
+                if (port == "COM4") {
                     newRotation = new Vector3(curr_angle_x * factor, -curr_angle_z * factor, 0);
                 } else {
                     newRotation = new Vector3(0, -curr_angle_z * factor, 0);
                     bool buttonPressed = dataRaw[6] == "1";
-
+                    bool notPressed = dataRaw[6] == "0";
+                    Debug.Log(dataString);
                     if (buttonPressed) {
-                        Debug.Log("Button pressed");
-
-                        if (!pressed) {
-                            transform.localPosition = new Vector3(0, 0, DistanceToMoveOnButtonpress);
-                            pressed = true;
-                        } else {
-                            transform.localPosition = Vector3.zero;
-                            pressed = false;
-                        }
+                        //Debug.Log("Button pressed");
+                        transform.localPosition = new Vector3(0, 0, DistanceToMoveOnButtonpress);
+                    } else if (notPressed) {
+                        //Debug.Log("not pressed");
+                        transform.localPosition = Vector3.zero;
                     }
                 }
                 target.transform.localRotation = Quaternion.Euler(newRotation);
