@@ -9,7 +9,7 @@ using System.Linq;
 
 public class Gyrosensor : MonoBehaviour {
     SerialPort stream;
-
+    public GameObject target;
     float acc_normalizer_factor = 0.00025f;
     //float gyro_normalizer_factor = 1.0f / 32768.0f;   // 32768 is max value captured during test on imu
     float gyro_normalizer_factor = 1.0f / 32768.0f;
@@ -121,16 +121,15 @@ public class Gyrosensor : MonoBehaviour {
                     bool buttonPressed = dataRaw[6] == "1";
                     if (buttonPressed) Debug.Log("Button pressed");
                 }
-                transform.localRotation = Quaternion.Euler(newRotation);
+                target.transform.localRotation = Quaternion.Euler(newRotation);
                 rotationQueue.Enqueue(newRotation);
-
             }
 
             Vector3 resetRotation = new Vector3(0, 0, 0);
             if (Input.GetKeyDown(KeyCode.R)) {
-                transform.rotation = Quaternion.Euler(resetRotation);
+                target.transform.rotation = Quaternion.Euler(resetRotation);
             }
-            
+
             stream.BaseStream.Flush();
             stream.DiscardInBuffer();
         }
