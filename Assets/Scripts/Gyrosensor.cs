@@ -29,6 +29,7 @@ public class Gyrosensor : MonoBehaviour {
     public bool EnableMouseControlsForController = false;
     public String port;
     private Queue<Vector3> rotationQueue = new Queue<Vector3>();
+    private Thread datalogger;
 
     void Start() {
         try {
@@ -47,7 +48,7 @@ public class Gyrosensor : MonoBehaviour {
             stream.DtrEnable = false;
             stream.Open();
 
-            Thread datalogger = new Thread(LogDataAsync);
+            datalogger = new Thread(LogDataAsync);
             datalogger.Start();
         } catch {
             // disable the script if Arduino not found
@@ -64,7 +65,7 @@ public class Gyrosensor : MonoBehaviour {
         if (stream.IsOpen) {
             try {
                 dataString = stream.ReadLine();
-                Debug.Log("DATA_ : " + dataString);
+                //Debug.Log("DATA_ : " + dataString);
             } catch (System.IO.IOException ioe) {
                 Debug.Log("IOException: " + ioe.Message);
             } catch {
@@ -89,6 +90,9 @@ public class Gyrosensor : MonoBehaviour {
             float gx = Int32.Parse(dataRaw[3]) * gyro_normalizer_factor;
             float gy = Int32.Parse(dataRaw[4]) * gyro_normalizer_factor;
             float gz = Int32.Parse(dataRaw[5]) * gyro_normalizer_factor;
+
+            //Button state
+            int bs = Int32.Parse(dataRaw[6]);
 
             // Prevent drift? Not sure. Only applicable for accelerometer
             if (Mathf.Abs(ax) - 1 < 0) ax = 0;
@@ -122,6 +126,12 @@ public class Gyrosensor : MonoBehaviour {
 
                 transform.localRotation = Quaternion.Euler(newRotation);
                 rotationQueue.Enqueue(newRotation);
+
+                if (bs == 1)
+                    Debug.Log("BS: 1");
+                if (bs == 0)
+                    Debug.Log("BS: 0");
+
             }
 
             Vector3 resetRotation = new Vector3(0, 0, 0);
@@ -157,5 +167,10 @@ public class Gyrosensor : MonoBehaviour {
                 }
             }
         }
+    }
+
+    private void OnApplicationQuit()
+    {
+        datalogger.Abort();
     }
 }
