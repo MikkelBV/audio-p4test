@@ -3,7 +3,7 @@ const int MPU = 0x68;  // I2C address of the MPU-9250
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ; // Variables for 16bit values
 
 int buttonState = 0;
-int buttonPin = 6;
+int buttonPin = 7;
 int buttonStateUni;
 int state = LOW;
 int previous = LOW;

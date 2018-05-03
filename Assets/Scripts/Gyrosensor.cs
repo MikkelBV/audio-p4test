@@ -14,6 +14,8 @@ public class Gyrosensor : MonoBehaviour {
     //float gyro_normalizer_factor = 1.0f / 32768.0f;   // 32768 is max value captured during test on imu
     float gyro_normalizer_factor = 1.0f / 32768.0f;
     public float noise_threshold = 0.01f;
+    public float DistanceToMoveOnButtonpress;
+    private bool pressed = false;
 
     float curr_angle_x = 0;
     float curr_angle_y = 0;
@@ -117,9 +119,19 @@ public class Gyrosensor : MonoBehaviour {
                     newRotation = new Vector3(curr_angle_x * factor, -curr_angle_z * factor, 0);
                 } else {
                     newRotation = new Vector3(0, -curr_angle_z * factor, 0);
-                    //Button state
                     bool buttonPressed = dataRaw[6] == "1";
-                    if (buttonPressed) Debug.Log("Button pressed");
+
+                    if (buttonPressed) {
+                        Debug.Log("Button pressed");
+
+                        if (!pressed) {
+                            transform.localPosition = new Vector3(0, 0, DistanceToMoveOnButtonpress);
+                            pressed = true;
+                        } else {
+                            transform.localPosition = Vector3.zero;
+                            pressed = false;
+                        }
+                    }
                 }
                 target.transform.localRotation = Quaternion.Euler(newRotation);
                 rotationQueue.Enqueue(newRotation);
