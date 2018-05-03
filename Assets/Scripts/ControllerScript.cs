@@ -8,7 +8,7 @@ public class ControllerScript : MonoBehaviour {
 	
 	void Update ()  {
         if (Input.GetMouseButtonDown(0)) {
-            transform.localPosition = transform.forward * Distance;
+            transform.localPosition = new Vector3(0, 0, Distance);
         } else if (Input.GetMouseButtonDown(1)) {
             transform.localPosition = Normal;
         }
