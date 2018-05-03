@@ -53,6 +53,7 @@ public class Gyrosensor : MonoBehaviour {
             // disable the script if Arduino not found
             Debug.Log("Could not connect to Arduino on port " + port);
             this.enabled = false;
+
             if (EnableMouseControlsForController) EnableMouseControls();
         }
     }
@@ -77,8 +78,6 @@ public class Gyrosensor : MonoBehaviour {
             char splitChar = ';';
             string[] dataRaw = dataString.Split(splitChar);
 
-            if (dataRaw.Length != 7) return;
-
             // Normalized ACCELEROMETER data (can be enabled with "Enable translation")
             float ax = Int32.Parse(dataRaw[0]) * acc_normalizer_factor;
             float ay = Int32.Parse(dataRaw[1]) * acc_normalizer_factor;
@@ -89,8 +88,7 @@ public class Gyrosensor : MonoBehaviour {
             float gy = Int32.Parse(dataRaw[4]) * gyro_normalizer_factor;
             float gz = Int32.Parse(dataRaw[5]) * gyro_normalizer_factor;
 
-            //Button state
-            bool buttonPressed = dataRaw[6] == "1";
+
 
             // Prevent drift? Not sure. Only applicable for accelerometer
             if (Mathf.Abs(ax) - 1 < 0) ax = 0;
@@ -117,15 +115,17 @@ public class Gyrosensor : MonoBehaviour {
             if (enableRotation) {
                 Vector3 newRotation;
 
-                if (port == "COM3")
+                if (port == "COM3") {
                     newRotation = new Vector3(curr_angle_x * factor, -curr_angle_z * factor, 0);
-                else
+                } else {
                     newRotation = new Vector3(0, -curr_angle_z * factor, 0);
-
+                    //Button state
+                    bool buttonPressed = dataRaw[6] == "1";
+                    if (buttonPressed) Debug.Log("Button pressed");
+                }
                 transform.localRotation = Quaternion.Euler(newRotation);
                 rotationQueue.Enqueue(newRotation);
 
-                if (buttonPressed) Debug.Log("Button pressed");
             }
 
             Vector3 resetRotation = new Vector3(0, 0, 0);
