@@ -25,7 +25,6 @@ public class Gyrosensor : MonoBehaviour {
 
     public float factor = 13;
     public bool enableRotation;
-    public bool enableTranslation;
     public bool EnableMouseControlsForController = false;
     public String port;
     private Queue<Vector3> rotationQueue = new Queue<Vector3>();
@@ -111,7 +110,6 @@ public class Gyrosensor : MonoBehaviour {
             curr_angle_y += gy;
             curr_angle_z += gz;
 
-            // if (enableTranslation) transform.position = new Vector3(curr_offset_x * 0.5f, curr_offset_z* 0.5f, curr_offset_y*0.5f);
             if (enableRotation) {
                 Vector3 newRotation;
 
@@ -129,9 +127,10 @@ public class Gyrosensor : MonoBehaviour {
             }
 
             Vector3 resetRotation = new Vector3(0, 0, 0);
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.R)) {
                 transform.rotation = Quaternion.Euler(resetRotation);
-
+            }
+            
             stream.BaseStream.Flush();
             stream.DiscardInBuffer();
         }
