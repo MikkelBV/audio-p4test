@@ -2,13 +2,16 @@
 const int MPU = 0x68;  // I2C address of the MPU-9250
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ; // Variables for 16bit values
 
+//Only used in controller
 int buttonState = 0;
+/*
 int buttonPin = 7;
 int buttonStateUni;
 int state = LOW;
 int previous = LOW;
 long time = 0;
 long debounce = 200;
+ */
  
 void setup(){
   Wire.begin(); // Initiates the Wire library and joins the I2C in the system (allows communication on the detected USB COM port). Is called as a master by default.
@@ -17,7 +20,7 @@ void setup(){
   Wire.write(0);     // Sending a 0 to PWR_MGMT_1 wakes up the sensor 
   Wire.endTransmission(true); //Ends transmission, and sends all data to the I2C
 
-  pinMode(buttonPin, INPUT);
+  //pinMode(buttonPin, INPUT);
   Serial.begin(9600);
 }
  
@@ -36,6 +39,7 @@ void loop(){
   GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
   GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
  
+ /*
   buttonState = digitalRead(buttonPin);
 
 
@@ -55,10 +59,11 @@ void loop(){
   if (state == LOW){
     buttonStateUni = 0;
   }
+*/
  
   Serial.print(AcX); Serial.print(";"); Serial.print(AcY); Serial.print(";"); Serial.print(AcZ); Serial.print(";");
   Serial.print(GyX); Serial.print(";"); Serial.print(GyY); Serial.print(";"); Serial.print(GyZ); Serial.print(";");
-  Serial.print(buttonStateUni); Serial.println("");
+  Serial.print(buttonState); Serial.println("");
   Serial.flush();
 
  
