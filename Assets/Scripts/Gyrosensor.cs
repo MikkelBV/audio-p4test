@@ -117,6 +117,7 @@ public class Gyrosensor : MonoBehaviour {
 
                 if (port == "COM4") {
                     newRotation = new Vector3(curr_angle_x * factor, -curr_angle_z * factor, 0);
+                    rotationQueue.Enqueue(newRotation);
                 } else {
                     newRotation = new Vector3(0, -curr_angle_z * factor, 0);
                     bool buttonPressed = dataRaw[6] == "1";
