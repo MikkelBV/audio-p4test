@@ -156,10 +156,10 @@ public class Gyrosensor : MonoBehaviour {
         string path = string.Format("log-{0}.csv", port);
         using (StreamWriter dataFile = new StreamWriter(path)) {
             // write header
-            dataFile.WriteLine("x, y, z");
+            dataFile.WriteLine("x,y,z");
             dataFile.Flush();
 
-            while (Application.isPlaying) {
+            while (true) {
                 if (rotationQueue.Count > 0) {
                     Vector3 rotation = rotationQueue.Dequeue();
                     string rotationToString = string.Format("{0}, {1}, {2}", rotation.x, rotation.y, rotation.z);
