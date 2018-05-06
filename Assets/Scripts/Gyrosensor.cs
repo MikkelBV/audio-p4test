@@ -15,7 +15,6 @@ public class Gyrosensor : MonoBehaviour {
     float gyro_normalizer_factor = 1.0f / 32768.0f;
     public float noise_threshold = 0.01f;
     public float DistanceToMoveOnButtonpress;
-    private bool pressed = false;
 
     float curr_angle_x = 0;
     float curr_angle_y = 0;
@@ -31,6 +30,8 @@ public class Gyrosensor : MonoBehaviour {
     public String port;
     private Queue<Vector3> rotationQueue = new Queue<Vector3>();
     private Thread datalogger;
+
+    private volatile bool shouldLog = true;
 
     void Start() {
         try {
@@ -59,6 +60,10 @@ public class Gyrosensor : MonoBehaviour {
         }
     }
 
+    void OnApplicationQuit() {
+        stream.Close();
+        shouldLog = false;
+    }
 
     void Update() {
         string dataString = "0;0;0;0;0;0;-1";
@@ -68,7 +73,10 @@ public class Gyrosensor : MonoBehaviour {
                 dataString = stream.ReadLine();
             } catch (System.IO.IOException ioe) {
                 Debug.Log("IOException: " + ioe.Message);
-            } catch {}
+                dataString = null;
+            } catch {
+                dataString = null;
+            }
         } else {
             dataString = null;
         }
@@ -117,20 +125,18 @@ public class Gyrosensor : MonoBehaviour {
 
                 if (port == "COM4") {
                     newRotation = new Vector3(curr_angle_x * factor, -curr_angle_z * factor, 0);
-                    rotationQueue.Enqueue(newRotation);
                 } else {
                     newRotation = new Vector3(0, -curr_angle_z * factor, 0);
                     bool buttonPressed = dataRaw[6] == "1";
                     bool notPressed = dataRaw[6] == "0";
-                    Debug.Log(dataString);
+
                     if (buttonPressed) {
-                        //Debug.Log("Button pressed");
                         transform.localPosition = new Vector3(0, 0, DistanceToMoveOnButtonpress);
                     } else if (notPressed) {
-                        //Debug.Log("not pressed");
                         transform.localPosition = Vector3.zero;
                     }
                 }
+
                 target.transform.localRotation = Quaternion.Euler(newRotation);
                 rotationQueue.Enqueue(newRotation);
             }
@@ -160,10 +166,10 @@ public class Gyrosensor : MonoBehaviour {
             dataFile.WriteLine("x,y,z");
             dataFile.Flush();
 
-            while (true) {
+            while (shouldLog) {
                 if (rotationQueue.Count > 0) {
                     Vector3 rotation = rotationQueue.Dequeue();
-                    string rotationToString = string.Format("{0}, {1}, {2}", rotation.x, rotation.y, rotation.z);
+                    string rotationToString = string.Format("{0},{1},{2}", rotation.x, rotation.y, rotation.z);
                     dataFile.WriteLine(rotationToString);
                     dataFile.Flush();
                 }
