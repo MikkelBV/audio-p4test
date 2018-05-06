@@ -141,9 +141,8 @@ public class Gyrosensor : MonoBehaviour {
                 rotationQueue.Enqueue(newRotation);
             }
 
-            Vector3 resetRotation = new Vector3(0, 0, 0);
             if (Input.GetKeyDown(KeyCode.R)) {
-                target.transform.rotation = Quaternion.Euler(resetRotation);
+                target.transform.rotation = Quaternion.Euler(Vector3.zero);
             }
 
             stream.BaseStream.Flush();
