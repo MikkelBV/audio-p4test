@@ -8,10 +8,11 @@ using System.Linq;
 
 public class RemoteControllerScript : MonoBehaviour {
 	public GameObject target;
+    public String PORT;
+    public RailSystem rail;
 	public float distanceToMove = 5;
     public float noiseThreshold = 0.01f;
     public float factor = 30;
-    public String PORT;
 
 	private SerialPort stream;
     private float normalisationFactor = 1.0f / 32768.0f;
@@ -70,8 +71,8 @@ public class RemoteControllerScript : MonoBehaviour {
 
 			// get button state
 			buttonOn = rawData[6] == "1";
-			// if (buttonOn) Debug.Log("on");
-			// else Debug.Log("off");
+			if (buttonOn) rail.enabled = false;
+			else rail.enabled = true;
 		}
 		catch (System.IO.IOException ioe) {
 			Debug.Log("IOException: " + ioe.Message);
