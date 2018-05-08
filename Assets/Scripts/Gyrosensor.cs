@@ -123,7 +123,7 @@ public class Gyrosensor : MonoBehaviour {
             if (enableRotation) {
                 Vector3 newRotation;
 
-                if (port == "COM4") {
+                if (port == "COM3") {
                     newRotation = new Vector3(curr_angle_x * factor, -curr_angle_z * factor, 0);
                 } else {
                     newRotation = new Vector3(0, -curr_angle_z * factor, 0);
