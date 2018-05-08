@@ -6,8 +6,9 @@ using System.IO.Ports;
 using System.IO;
 using System.Linq;
 
-public class HeadTracker : MonoBehaviour {
-    public GameObject target;
+public class RemoteControllerScript : MonoBehaviour {
+	public GameObject target;
+	public float distanceToMove = 5;
     public float noiseThreshold = 0.01f;
     public float factor = 30;
     public String PORT;
@@ -17,6 +18,7 @@ public class HeadTracker : MonoBehaviour {
     private float angleX = 0;
     private float angleY = 0;
     private float angleZ = 0;
+	private bool buttonOn = false;
 
     private volatile bool shouldLog = true;
     private Queue<Vector3> rotationQueue = new Queue<Vector3>();
@@ -51,7 +53,6 @@ public class HeadTracker : MonoBehaviour {
 		
 		try {
 			string input = stream.ReadLine();
-			Debug.Log(input);
 			string[] rawData = input.Split(';');
 
             float gx = Int32.Parse(rawData[3]) * normalisationFactor;
@@ -67,9 +68,10 @@ public class HeadTracker : MonoBehaviour {
             angleY += gy;
             angleZ += gz;
 
-			Vector3 newRotation = new Vector3(angleX * factor, -angleZ * factor, 0);
-			target.transform.localRotation = Quaternion.Euler(newRotation);
-			rotationQueue.Enqueue(newRotation);
+			// get button state
+			buttonOn = rawData[6] == "1";
+			// if (buttonOn) Debug.Log("on");
+			// else Debug.Log("off");
 		}
 		catch (System.IO.IOException ioe) {
 			Debug.Log("IOException: " + ioe.Message);
