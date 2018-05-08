@@ -22,15 +22,14 @@ public class UXtestscript : MonoBehaviour {
 		}
 
 		TestClip sound = soundQueue.Dequeue();
-		AudioSource.PlayClipAtPoint(sound.clip, sound.position);
+		sound.clip.Play();
 		Debug.Log(sound.message);
 	}
 }
 
 [System.Serializable]
 public struct TestClip {
-	public Vector3 position;
-	public AudioClip clip;
+	public AudioSource clip;
 	public string message;
 }
 
