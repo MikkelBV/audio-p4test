@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 
 public class HeadTracker : MonoBehaviour {
-    public GameObject target;
     public float noiseThreshold = 0.01f;
     public float factor = 30;
     public String PORT;
@@ -68,7 +67,7 @@ public class HeadTracker : MonoBehaviour {
             angleZ += gz;
 
 			Vector3 newRotation = new Vector3(angleX * factor, -angleZ * factor, 0);
-			target.transform.localRotation = Quaternion.Euler(newRotation);
+			transform.localRotation = Quaternion.Euler(newRotation);
 			rotationQueue.Enqueue(newRotation);
 		}
 		catch (System.IO.IOException ioe) {
