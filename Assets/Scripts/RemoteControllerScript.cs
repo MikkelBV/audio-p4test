@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using System.Threading;
 using System;
 using System.IO.Ports;
@@ -8,6 +9,7 @@ using System.Linq;
 
 public class RemoteControllerScript : MonoBehaviour {
 	public GameObject target;
+    public AudioMixer audioMixer;
     public String PORT;
     public RailSystem rail;
 	public float distanceToMove = 5;
@@ -20,6 +22,7 @@ public class RemoteControllerScript : MonoBehaviour {
     private float angleY = 0;
     private float angleZ = 0;
 	private bool buttonOn = false;
+    private float volume = 0;
 
     private volatile bool shouldLog = true;
     private Queue<Vector3> rotationQueue = new Queue<Vector3>();
@@ -36,6 +39,7 @@ public class RemoteControllerScript : MonoBehaviour {
 
             datalogger = new Thread(LogDataAsync);
             datalogger.Start();
+
         }
 		catch {
             // disable the script if Arduino not found
@@ -68,9 +72,12 @@ public class RemoteControllerScript : MonoBehaviour {
 			angleX += gx;
             angleY += gy;
             angleZ += gz;
+            
+            volume += -gz * 5;
 
-			// get button state
+            // get button state
 			buttonOn = rawData[6] == "1";
+
 			if (buttonOn) rail.enabled = false;
 			else rail.enabled = true;
 		}
@@ -83,12 +90,16 @@ public class RemoteControllerScript : MonoBehaviour {
             stream.Close();
         }
 
+        if (volume > 15) volume = 15;
+        else if (volume < -10) volume = -10;
+        audioMixer.SetFloat("Volume", volume);
+
 		stream.BaseStream.Flush();
 		stream.DiscardInBuffer();
     }
 
     void LogDataAsync() {
-        string path = "headtracker-" + PORT + ".csv";
+        string path = "remotecontroller-" + PORT + ".csv";
         using (StreamWriter dataFile = new StreamWriter(path)) {
             // write header
             dataFile.WriteLine("x,y,z");
