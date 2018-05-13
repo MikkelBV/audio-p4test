@@ -84,7 +84,9 @@ public class HeadTracker : MonoBehaviour {
     }
 
     void LogDataAsync() {
-        string path = "headtracker-" + PORT + ".csv";
+        string date = DateTimeOffset.Now.ToString("s").Replace(':', '_');
+
+        string path = "headtracker-" + PORT + "_" + date + ".csv";
         using (StreamWriter dataFile = new StreamWriter(path)) {
             // write header
             dataFile.WriteLine("x,y,z");

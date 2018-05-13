@@ -25,7 +25,7 @@ public class RemoteControllerScript : MonoBehaviour {
     private float volume = 0;
 
     private volatile bool shouldLog = true;
-    private Queue<Vector3> rotationQueue = new Queue<Vector3>();
+    private Queue<DataPiece> dataQueue = new Queue<DataPiece>();
     private Thread datalogger;
 
     void Start() {
@@ -39,7 +39,6 @@ public class RemoteControllerScript : MonoBehaviour {
 
             datalogger = new Thread(LogDataAsync);
             datalogger.Start();
-
         }
 		catch {
             // disable the script if Arduino not found
@@ -49,7 +48,7 @@ public class RemoteControllerScript : MonoBehaviour {
     }
 
     void OnApplicationQuit() {
-        stream.Close();
+        if (stream != null) stream.Close();
         shouldLog = false;
     }
 
@@ -80,6 +79,8 @@ public class RemoteControllerScript : MonoBehaviour {
 
 			if (buttonOn) rail.enabled = false;
 			else rail.enabled = true;
+
+            dataQueue.Enqueue(new DataPiece(buttonOn, volume));
 		}
 		catch (System.IO.IOException ioe) {
 			Debug.Log("IOException: " + ioe.Message);
@@ -99,20 +100,34 @@ public class RemoteControllerScript : MonoBehaviour {
     }
 
     void LogDataAsync() {
-        string path = "remotecontroller-" + PORT + ".csv";
+        string date = DateTimeOffset.Now.ToString("s").Replace(':', '_');
+
+        string path = "remotecontroller-" + PORT + "-" + date + ".csv";
         using (StreamWriter dataFile = new StreamWriter(path)) {
             // write header
-            dataFile.WriteLine("x,y,z");
+            dataFile.WriteLine("volume,buttonDown");
             dataFile.Flush();
 
+            Debug.Log("wrote header");
+
             while (shouldLog) {
-                if (rotationQueue.Count > 0) {
-                    Vector3 rotation = rotationQueue.Dequeue();
-                    string rotationToString = rotation.x + "," + rotation.y + "," + rotation.z;
-					dataFile.WriteLine(rotationToString);
+                if (dataQueue.Count > 0) {
+                    DataPiece data = dataQueue.Dequeue();
+                    string dataToString = data.volume + "," + data.buttonDown;
+					dataFile.WriteLine(dataToString);
                     dataFile.Flush();
                 }
             }
         }
+    }
+}
+
+struct DataPiece {
+    public bool buttonDown;
+    public float volume;
+
+    public DataPiece(bool _buttonDown, float _volume) {
+        buttonDown = _buttonDown;
+        volume = _volume;
     }
 }
