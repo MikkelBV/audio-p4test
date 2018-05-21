@@ -66,7 +66,7 @@ public class HeadTracker : MonoBehaviour {
             angleY += gy;
             angleZ += gz;
 
-			Vector3 newRotation = new Vector3(angleX * factor, -angleZ * factor, 0);
+			Vector3 newRotation = new Vector3(-angleX * factor, -angleZ * factor, 0);
 			transform.localRotation = Quaternion.Euler(newRotation);
 			rotationQueue.Enqueue(newRotation);
 		}

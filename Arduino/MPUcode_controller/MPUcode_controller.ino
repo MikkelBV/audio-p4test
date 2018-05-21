@@ -58,7 +58,7 @@ void loop(){
  
   Serial.print(AcX); Serial.print(";"); Serial.print(AcY); Serial.print(";"); Serial.print(AcZ); Serial.print(";");
   Serial.print(GyX); Serial.print(";"); Serial.print(GyY); Serial.print(";"); Serial.print(GyZ); Serial.print(";");
-  Serial.print(buttonStateUni); Serial.println("");
+  Serial.print(buttonState); Serial.println("");
   Serial.flush();
 
  
