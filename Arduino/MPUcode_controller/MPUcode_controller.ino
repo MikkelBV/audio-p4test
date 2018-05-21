@@ -39,7 +39,7 @@ void loop(){
   buttonState = digitalRead(buttonPin);
 
 
-  if (buttonState == HIGH && previous == LOW && millis() - time > debounce){
+  /*if (buttonState == HIGH && previous == LOW && millis() - time > debounce){
     if(state == HIGH){
       state = LOW;
     }
@@ -54,11 +54,11 @@ void loop(){
   }
   if (state == LOW){
     buttonStateUni = 0;
-  }
+  }*/
  
   Serial.print(AcX); Serial.print(";"); Serial.print(AcY); Serial.print(";"); Serial.print(AcZ); Serial.print(";");
   Serial.print(GyX); Serial.print(";"); Serial.print(GyY); Serial.print(";"); Serial.print(GyZ); Serial.print(";");
-  Serial.print(buttonStateUni); Serial.println("");
+  Serial.print(buttonState); Serial.println("");
   Serial.flush();
 
  

@@ -72,13 +72,13 @@ public class RemoteControllerScript : MonoBehaviour {
             angleY += gy;
             angleZ += gz;
             
-            volume += -gz * 5;
+            // volume += -gz * 5;
 
             // get button state
 			buttonOn = rawData[6] == "1";
 
-			if (buttonOn) rail.enabled = false;
-			else rail.enabled = true;
+			if (buttonOn) volume += -gz * 5;//rail.enabled = false;
+			//else rail.enabled = true;
 
             dataQueue.Enqueue(new DataPiece(buttonOn, volume));
 		}
@@ -92,7 +92,7 @@ public class RemoteControllerScript : MonoBehaviour {
         }
 
         if (volume > 15) volume = 15;
-        else if (volume < -10) volume = -10;
+        else if (volume < -20) volume = -20;
         audioMixer.SetFloat("Volume", volume);
 
 		stream.BaseStream.Flush();
