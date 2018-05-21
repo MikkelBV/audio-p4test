@@ -2,7 +2,7 @@
 const int MPU = 0x68;  // I2C address of the MPU-9250
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ; // Variables for 16bit values
 
-int buttonState = 0;
+int buttonState = LOW;
 int buttonPin = 7;
 int buttonStateUni;
 int state = LOW;
@@ -58,11 +58,12 @@ void loop(){
  
   Serial.print(AcX); Serial.print(";"); Serial.print(AcY); Serial.print(";"); Serial.print(AcZ); Serial.print(";");
   Serial.print(GyX); Serial.print(";"); Serial.print(GyY); Serial.print(";"); Serial.print(GyZ); Serial.print(";");
-  Serial.print(buttonState); Serial.println("");
+  Serial.print(buttonStateUni); Serial.println("");
   Serial.flush();
 
  
   delay(16);
 }
  
+
 
